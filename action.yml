@@ -153,6 +153,12 @@ runs:
       id: prepare
       shell: bash
       run: |
+        # Change to CLAUDE_PREPARE_DIR if set (for running in custom directories)
+        if [ -n "$CLAUDE_PREPARE_DIR" ]; then
+          echo "Changing directory to CLAUDE_PREPARE_DIR: $CLAUDE_PREPARE_DIR"
+          cd "$CLAUDE_PREPARE_DIR"
+        fi
+
         bun run ${GITHUB_ACTION_PATH}/src/entrypoints/prepare.ts
       env:
         MODE: ${{ inputs.mode }}
@@ -212,6 +218,10 @@ runs:
       if: steps.prepare.outputs.contains_trigger == 'true'
       shell: bash
       run: |
+        if [ -n "$CLAUDE_WORKING_DIR" ]; then
+          echo "Changing directory to CLAUDE_WORKING_DIR: $CLAUDE_WORKING_DIR"
+          cd "$CLAUDE_WORKING_DIR"
+        fi
 
         # Run the base-action
         bun run ${GITHUB_ACTION_PATH}/base-action/src/index.ts
